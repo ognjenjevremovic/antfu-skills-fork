@@ -43,3 +43,111 @@
 [submodule "sources/nitro"]
 	path = sources/nitro
 	url = https://github.com/nitrojs/nitro
+[submodule "sources/nestjs"]
+	path = sources/nestjs
+	url = https://github.com/nestjs/nest
+[submodule "sources/primevue"]
+	path = sources/primevue
+	url = https://github.com/primefaces/primevue
+[submodule "sources/vee-validate"]
+	path = sources/vee-validate
+	url = https://github.com/logaretm/vee-validate
+[submodule "sources/ofetch"]
+	path = sources/ofetch
+	url = https://github.com/unjs/ofetch
+[submodule "sources/playwright"]
+	path = sources/playwright
+	url = https://github.com/microsoft/playwright
+[submodule "sources/keyv"]
+	path = sources/keyv
+	url = https://github.com/jaredwray/keyv
+[submodule "sources/opentelemetry"]
+	path = sources/opentelemetry
+	url = https://github.com/open-telemetry/opentelemetry-js
+[submodule "sources/sentry"]
+	path = sources/sentry
+	url = https://github.com/getsentry/sentry-javascript
+[submodule "sources/rxjs"]
+	path = sources/rxjs
+	url = https://github.com/reactivex/rxjs
+[submodule "sources/pino"]
+	path = sources/pino
+	url = https://github.com/pinojs/pino
+[submodule "sources/pg-boss"]
+	path = sources/pg-boss
+	url = https://github.com/timgit/pg-boss
+[submodule "sources/pg"]
+	path = sources/pg
+	url = https://github.com/brianc/node-postgres
+[submodule "sources/nodemailer"]
+	path = sources/nodemailer
+	url = https://github.com/nodemailer/nodemailer
+[submodule "sources/helmet"]
+	path = sources/helmet
+	url = https://github.com/helmetjs/helmet
+[submodule "sources/jsonwebtoken"]
+	path = sources/jsonwebtoken
+	url = https://github.com/auth0/node-jsonwebtoken
+[submodule "sources/cookie"]
+	path = sources/cookie
+	url = https://github.com/jshttp/cookie
+[submodule "sources/typeorm"]
+	path = sources/typeorm
+	url = https://github.com/nestjs/typeorm
+[submodule "sources/cache-manager"]
+	path = sources/cache-manager
+	url = https://github.com/jaredwray/cacheable
+[submodule "sources/class-validator"]
+	path = sources/class-validator
+	url = https://github.com/typestack/class-validator
+[submodule "sources/class-transformer"]
+	path = sources/class-transformer
+	url = https://github.com/typestack/class-transformer
+[submodule "sources/supertest"]
+	path = sources/supertest
+	url = https://github.com/forwardemail/supertest
+[submodule "sources/jest"]
+	path = sources/jest
+	url = https://github.com/jestjs/jest
+[submodule "sources/nestjs-pino"]
+	path = sources/nestjs-pino
+	url = https://github.com/iamolegga/nestjs-pino
+[submodule "sources/nestjs-zod"]
+	path = sources/nestjs-zod
+	url = https://github.com/BenLorantfy/nestjs-zod
+[submodule "sources/nestjs-schedule"]
+	path = sources/nestjs-schedule
+	url = https://github.com/nestjs/schedule
+[submodule "sources/nestjs-jwt"]
+	path = sources/nestjs-jwt
+	url = https://github.com/nestjs/jwt
+[submodule "sources/nestjs-typeorm"]
+	path = sources/nestjs-typeorm
+	url = https://github.com/nestjs/typeorm
+[submodule "sources/nestjs-terminus"]
+	path = sources/nestjs-terminus
+	url = https://github.com/nestjs/terminus
+[submodule "sources/nestjs-event-emitter"]
+	path = sources/nestjs-event-emitter
+	url = https://github.com/nestjs/event-emitter
+[submodule "sources/nestjs-cache-manager"]
+	path = sources/nestjs-cache-manager
+	url = https://github.com/nestjs/cache-manager
+[submodule "sources/nestjs-swagger"]
+	path = sources/nestjs-swagger
+	url = https://github.com/nestjs/swagger
+[submodule "sources/nestjs-throttler"]
+	path = sources/nestjs-throttler
+	url = https://github.com/nestjs/throttler
+[submodule "vendor/zod-skills"]
+	path = vendor/zod-skills
+	url = https://github.com/anivar/zod-skill
+[submodule "vendor/mcollina-node-skills"]
+	path = vendor/mcollina-node-skills
+	url = https://github.com/mcollina/skills/
+[submodule "sources/zod"]
+	path = sources/zod
+	url = https://github.com/colinhacks/zod
+[submodule "vendor/nestjs-best-practices"]
+	path = vendor/nestjs-best-practices
+	url = https://github.com/Kadajett/agent-nestjs-skills
