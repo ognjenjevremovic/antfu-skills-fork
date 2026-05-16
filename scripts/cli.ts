@@ -67,6 +67,7 @@ interface Project {
 interface VendorConfig {
   source: string
   skills: Record<string, string> // sourceSkillName -> outputSkillName
+  posthook?: (sourcePath: string, outputPath: string) => void
 }
 
 async function initSubmodules(skipPrompt = false) {
@@ -193,10 +194,22 @@ async function syncSubmodules() {
     const vendorConfig = config as VendorConfig
     const vendorPath = join(root, 'vendor', vendorName)
     const vendorSkillsPath = join(vendorPath, 'skills')
+    const vendorPosthook = vendorConfig.posthook
 
     if (!existsSync(vendorPath)) {
       p.log.warn(`Vendor submodule not found: ${vendorName}. Run init first.`)
       continue
+    }
+
+    if (typeof vendorPosthook === 'function') {
+      spinner.start(`Running posthook for vendor: ${vendorName}`)
+      try {
+        vendorPosthook(vendorPath, join(root, 'skills'))
+        spinner.stop(`Posthook completed for vendor: ${vendorName}`)
+      }
+      catch (e) {
+        spinner.stop(`Posthook failed for vendor ${vendorName}: ${e}`)
+      }
     }
 
     if (!existsSync(vendorSkillsPath)) {
