@@ -5,6 +5,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node scripts/cli.ts",
+    "check-versions": "node scripts/check-versions.ts",
     "prepare": "simple-git-hooks && git submodule update --init --recursive"
   },
   "devDependencies": {
