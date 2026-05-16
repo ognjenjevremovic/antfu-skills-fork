@@ -1,13 +1,11 @@
 import { execSync } from 'node:child_process'
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { join } from 'node:path'
 import process from 'node:process'
-import { fileURLToPath } from 'node:url'
 import * as p from '@clack/prompts'
 import { manual, submodules, vendors } from '../meta.ts'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const root = join(__dirname, '..')
+const root = process.cwd()
 
 function exec(cmd: string, cwd = root): string {
   return execSync(cmd, { cwd, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
@@ -67,7 +65,8 @@ interface Project {
 interface VendorConfig {
   source: string
   skills: Record<string, string> // sourceSkillName -> outputSkillName
-  posthook?: (sourcePath: string, outputPath: string) => void
+  vendorBeforehook?: (sourcePath: string) => Promise<void>
+  vendorPosthook?: (sourcePath: string) => Promise<void>
 }
 
 async function initSubmodules(skipPrompt = false) {
@@ -181,7 +180,11 @@ async function syncSubmodules() {
   // Update all submodules
   spinner.start('Updating submodules...')
   try {
-    exec('git submodule update --remote --merge')
+    exec(`git submodule foreach --recursive '
+      git reset --hard
+      git clean -fd
+    '`)
+    exec('git submodule update --init --recursive --checkout')
     spinner.stop('Submodules updated')
   }
   catch (e) {
@@ -194,21 +197,23 @@ async function syncSubmodules() {
     const vendorConfig = config as VendorConfig
     const vendorPath = join(root, 'vendor', vendorName)
     const vendorSkillsPath = join(vendorPath, 'skills')
-    const vendorPosthook = vendorConfig.posthook
+    const vendorBeforehook = vendorConfig.vendorBeforehook
+    const vendorPosthook = vendorConfig.vendorPosthook
 
     if (!existsSync(vendorPath)) {
       p.log.warn(`Vendor submodule not found: ${vendorName}. Run init first.`)
       continue
     }
 
-    if (typeof vendorPosthook === 'function') {
-      spinner.start(`Running posthook for vendor: ${vendorName}`)
+    if (typeof vendorBeforehook === 'function') {
+      spinner.start(`Running beforehook for vendor: ${vendorName}`)
       try {
-        vendorPosthook(vendorPath, join(root, 'skills'))
-        spinner.stop(`Posthook completed for vendor: ${vendorName}`)
+        await vendorBeforehook(vendorPath)
+        spinner.stop(`Beforehook completed for vendor: ${vendorName}`)
       }
       catch (e) {
-        spinner.stop(`Posthook failed for vendor ${vendorName}: ${e}`)
+        spinner.stop(`Beforehook failed for vendor ${vendorName}: ${e}`)
+        continue
       }
     }
 
@@ -278,6 +283,19 @@ async function syncSubmodules() {
       writeFileSync(syncPath, syncContent)
 
       spinner.stop(`Synced: ${sourceSkillName} → ${outputSkillName}`)
+    }
+
+    // Run the cleanup of the posthook if it exists (e.g. to move files around, create additional files, etc.)
+    if (typeof vendorPosthook === 'function') {
+      spinner.start(`Running posthook for vendor: ${vendorName}`)
+      try {
+        await vendorPosthook(vendorPath)
+        spinner.stop(`Posthook completed for vendor: ${vendorName}`)
+      }
+      catch (e) {
+        spinner.stop(`Posthook failed for vendor ${vendorName}: ${e}`)
+        continue
+      }
     }
   }
 

@@ -2,7 +2,8 @@ export interface VendorSkillMeta {
   official?: boolean
   source: string
   skills: Record<string, string> // sourceSkillName -> outputSkillName
-  posthook?: (sourcePath: string, outputPath: string) => void
+  vendorBeforehook?: (sourcePath: string) => Promise<void>
+  vendorPosthook?: (sourcePath: string) => Promise<void>
 }
 
 /**
@@ -103,16 +104,24 @@ export const vendors: Record<string, VendorSkillMeta> = {
   'nestjs-best-practices': {
     source: 'https://github.com/Kadajett/agent-nestjs-skills/',
     skills: {
-      'nestjs-best-practices': 'nestjs-best-practices',
+      // Using 'default' as the skill name since the original repository doesn't have a `skills` directory
+      // and has skill files in the root, we will move those files to `skills/default`
+      // and copyt that `default` skill to our `skills` directory as a single skill.
+      default: 'nestjs-best-practices',
     },
-    posthook: _posthook_createSkillsDirectory.bind(null, ['AGENTS.md', 'SKILL.md'], ['skills', 'rules']),
+    vendorBeforehook: _beforehook_createSkillsDirectory.bind(null, ['AGENTS.md', 'SKILL.md'], ['references', 'rules']),
+    vendorPosthook: _posthook_removeSkillsDirectory,
   },
   'zod-skills': {
     source: 'https://github.com/anivar/zod-skill',
     skills: {
-      'zod-skill': 'zod-skill',
+      // Using 'default' as the skill name since the original repository doesn't have a `skills` directory
+      // and has skill files in the root, we will move those files to `skills/default`
+      // and copyt that `default` skill to our `skills` directory as a single skill.
+      default: 'zod-skill',
     },
-    posthook: _posthook_createSkillsDirectory.bind(null, ['AGENTS.md', 'SKILL.md'], ['skills', 'rules']),
+    vendorBeforehook: _beforehook_createSkillsDirectory.bind(null, ['AGENTS.md', 'SKILL.md'], ['references', 'rules']),
+    vendorPosthook: _posthook_removeSkillsDirectory,
   },
   'mcollina-node-skills': {
     source: 'https://github.com/mcollina/skills/',
@@ -135,32 +144,32 @@ export const manual = [
 ]
 
 /**
- * Posthook to create `skills` directory and move related files there, used for repositories that don't have a `skills` directory but have skill files in the root or other directories.
+ * Beforehook to create `skills` directory and move related files there, used for repositories that don't have a `skills` directory but have skill files in the root or other directories.
  */
-async function _posthook_createSkillsDirectory(
+async function _beforehook_createSkillsDirectory(
   filesToMove: string[] = [
     'AGENTS.md',
     'SKILL.md',
   ],
   directoriesToMove: string[] = [
-    'skills',
+    'references',
     'rules',
   ],
   sourcePath: string,
-  outputPath: string,
 ) {
   // Check if `skills` directory exists, if not, create it and move the related files there
   const fs = await import('node:fs')
   const path = await import('node:path')
-  const skillsDir = path.join(outputPath, 'skills')
+  const skillsDir = path.join(sourcePath, 'skills')
+  const singleSkillDir = path.join(skillsDir, 'default')
 
   if (!fs.existsSync(skillsDir)) {
-    fs.mkdirSync(skillsDir)
+    fs.mkdirSync(singleSkillDir, { recursive: true })
   }
 
   for (const file of filesToMove) {
     const src = path.join(sourcePath, file)
-    const dest = path.join(skillsDir, file)
+    const dest = path.join(singleSkillDir, file)
 
     if (fs.existsSync(src)) {
       fs.renameSync(src, dest)
@@ -169,10 +178,28 @@ async function _posthook_createSkillsDirectory(
 
   for (const dir of directoriesToMove) {
     const srcDir = path.join(sourcePath, dir)
-    const destDir = path.join(skillsDir, dir)
+    const destDir = path.join(singleSkillDir, dir)
 
     if (fs.existsSync(srcDir)) {
       fs.renameSync(srcDir, destDir)
     }
   }
+}
+
+/**
+ * Posthook to remove `skills` directory, used for repositories that have a `skills` directory but we want to remove it after generating skills.
+ */
+async function _posthook_removeSkillsDirectory(
+  sourcePath: string,
+) {
+  const { execSync } = await import('node:child_process')
+
+  execSync(
+    `git reset --hard HEAD && git clean -fdx`,
+    {
+      cwd: sourcePath,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    },
+  ).trim()
 }
