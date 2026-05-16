@@ -112,13 +112,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
     vendorBeforehook: _beforehook_createSkillsDirectory.bind(null, ['AGENTS.md', 'SKILL.md'], ['references', 'rules']),
     vendorPosthook: _posthook_removeSkillsDirectory,
   },
-  'zod-skills': {
+  'zod-best-practices': {
     source: 'https://github.com/anivar/zod-skill',
     skills: {
       // Using 'default' as the skill name since the original repository doesn't have a `skills` directory
       // and has skill files in the root, we will move those files to `skills/default`
       // and copyt that `default` skill to our `skills` directory as a single skill.
-      default: 'zod-skill',
+      default: 'zod-best-practices',
     },
     vendorBeforehook: _beforehook_createSkillsDirectory.bind(null, ['AGENTS.md', 'SKILL.md'], ['references', 'rules']),
     vendorPosthook: _posthook_removeSkillsDirectory,
