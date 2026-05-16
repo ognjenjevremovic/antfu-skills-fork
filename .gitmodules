@@ -34,6 +34,7 @@
 [submodule "sources/pinia"]
 	path = sources/pinia
 	url = https://github.com/vuejs/pinia
+	branch = v3
 [submodule "vendor/tsdown"]
 	path = vendor/tsdown
 	url = https://github.com/rolldown/tsdown
