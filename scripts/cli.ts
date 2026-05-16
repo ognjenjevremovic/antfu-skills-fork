@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process'
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import process from 'node:process'
 import * as p from '@clack/prompts'
 import { manual, submodules, vendors } from '../meta.ts'
